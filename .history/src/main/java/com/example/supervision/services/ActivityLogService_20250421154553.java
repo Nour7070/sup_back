@@ -1,0 +1,31 @@
+package com.example.supervision.services;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.example.supervision.classes.ActivityLog;
+import com.example.supervision.repositories.ActivityLogRepository;
+
+@Service
+public class ActivityLogService {
+
+    private final ActivityLogRepository repository;
+
+    public ActivityLogService(ActivityLogRepository repository) {
+        this.repository = repository;
+    }
+
+    public void log(String type, String description) {
+        ActivityLog activity = new ActivityLog();
+        activity.setType(type);
+        activity.setDescription(description);
+        activity.setTimestamp(LocalDateTime.now());
+        repository.save(activity);
+    }
+
+    public List<ActivityLog> getRecentActivities() {
+        return repository.findTop10ByOrderByTimestampDesc();
+    }
+}

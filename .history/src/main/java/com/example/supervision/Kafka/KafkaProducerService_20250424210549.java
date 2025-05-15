@@ -1,0 +1,81 @@
+/*package com.example.supervision.Kafka;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class KafkaProducerService {
+
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    @Autowired
+    public KafkaProducerService(KafkaTemplate<String, Object> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    public void sendMessage(String topic, Object message) {
+        System.out.println("Envoi d'un message Kafka au topic" + topic + message);
+        kafkaTemplate.send(topic, message);
+    }
+}*/
+
+package com.example.supervision.Kafka;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+
+import com.example.supervision.classes.Moderateur;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Service
+public class KafkaProducerService {
+
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
+
+    public KafkaProducerService(KafkaTemplate<String, String> kafkaTemplate, 
+                              ObjectMapper objectMapper) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.objectMapper = objectMapper;
+    }
+
+    public void sendFormateurStatus(String email, String status) {
+        try {
+            String message = objectMapper.writeValueAsString(
+                Map.of("email", email, "status", status)
+            );
+            kafkaTemplate.send("formateur-status", message);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Erreur Kafka", e);
+        }
+    }
+
+    public void sendModerator(Moderateur moderateur) {
+        Map<String, Object> moderateurData = new HashMap<>();
+        moderateurData.put("email", moderateur.getEmail());
+        moderateurData.put("password", moderateur.getPassword());
+        moderateurData.put("username", moderateur.getUsername());
+        moderateurData.put("nom", moderateur.getNom());
+        moderateurData.put("prenom", moderateur.getPrenom());
+        moderateurData.put("phone", moderateur.getPhoneNumber());
+        moderateurData.put("photo", moderateur.getPhoto());
+        
+        
+    
+        try {
+            String jsonMessage = objectMapper.writeValueAsString(moderateurData);
+            kafkaTemplate.send("new-moderator", jsonMessage);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Erreur Kafka", e);
+        }
+    }
+
+}
