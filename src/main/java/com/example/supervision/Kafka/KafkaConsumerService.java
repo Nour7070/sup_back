@@ -78,6 +78,7 @@
             String email = (String) formateurData.get("email");
             String prenom = (String) formateurData.get("prenom");
             String nom = (String) formateurData.get("nom");
+            String username = (String) formateurData.get("username");
             String status = (String) formateurData.get("status");
             
             List<String> certificatsUrls = (List<String>) formateurData.get("certificats");
@@ -99,6 +100,7 @@
             formateur.setId(id);
             formateur.setPrenom(prenom);
             formateur.setNom(nom);
+            formateur.setNom(username);
             formateur.setStatus(UserStatus.valueOf(status));
             
             List<Document> documents = new ArrayList<>();
@@ -159,6 +161,7 @@
                 
                 System.out.println("Réception d'un nouveau apprenant " + apprenantData.get("email"));
                 
+                Long id = ((Number) apprenantData.get("id")).longValue();
                 String email = (String) apprenantData.get("email");
                 String prenom = (String) apprenantData.get("prenom");
                 String nom = (String) apprenantData.get("nom");
@@ -172,6 +175,7 @@
                     System.out.println("Mise à jour de l'apprenant existant: " + email);
                 } else {
                     apprenant = new Apprenant();
+                    apprenant.setId(id);
                     apprenant.setEmail(email);
                     System.out.println("Création d'un nouveau apprenant: " + email);
                 }
