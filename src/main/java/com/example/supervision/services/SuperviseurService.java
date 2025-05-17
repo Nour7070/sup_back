@@ -37,6 +37,7 @@ public class SuperviseurService {
     public User createModerateur(User moderateurDTO, String userType) {
         
         Moderateur moderateur = new Moderateur();
+        moderateur.setId(System.currentTimeMillis());
         moderateur.setNom(moderateurDTO.getNom());
         moderateur.setPrenom(moderateurDTO.getPrenom());
         moderateur.setUsername(moderateurDTO.getUsername());
@@ -55,7 +56,6 @@ public class SuperviseurService {
 
         return savedModerator;
     }
-
     public void deleteModerator(Long moderatorId) {
         User moderator = userRepository.findById(moderatorId)
                 .orElseThrow(() -> new RuntimeException("Modérateur non trouvé avec l'ID: " + moderatorId));
